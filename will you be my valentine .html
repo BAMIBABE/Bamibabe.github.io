@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine Question</title>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: 'Arial', sans-serif;
+        background: #ffe6e6;
+        flex-direction: column;
+        text-align: center;
+        overflow: hidden;
+        position: relative;
+    }
+    h1 {
+        font-size: 2.5em;
+        color: #ff3366;
+        margin-bottom: 20px;
+    }
+    button {
+        padding: 15px 30px;
+        font-size: 1.2em;
+        margin: 10px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    button:hover {
+        transform: scale(1.1);
+    }
+    #noButton.moving {
+        position: absolute;
+    }
+    .sticker {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        pointer-events: none;
+        animation: floatUp 4s ease-out forwards;
+    }
+    @keyframes floatUp {
+        0% { transform: translateY(0) scale(1); opacity: 1; }
+        100% { transform: translateY(-200px) scale(0.5); opacity: 0; }
+    }
+    canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+    }
+</style>
+</head>
+<body>
+
+<h1 id="question">Will you be my Valentine?</h1>
+<button id="yesButton">Yes 💖</button>
+<button id="noButton">No 😢</button>
+
+<script>
+const yesButton = document.getElementById('yesButton');
+const noButton = document.getElementById('noButton');
+const questionText = document.getElementById('question');
+
+let noCount = 0;
+const questions = [
+    "Are you sure?",
+    "Really sure?",
+    "Think again!",
+    "Please say yes!",
+    "Do you want to hurt me?",
+    "Come on, give me a chance!",
+    "Don't you like surprises?",
+    "Wouldn't it be fun?",
+    "I promise it'll be worth it!",
+    "Last chance!"
+];
+
+const stickers = [
+    'https://i.postimg.cc/4xL1dFgp/heart.png',
+    'https://i.postimg.cc/bYy2Jg5r/cupcake.png',
+    'https://i.postimg.cc/TYHgkP3S/love-letter.png',
+    'https://i.postimg.cc/Z5D7yZFm/rose.png',
+    'https://i.postimg.cc/Zq7vN2VY/balloon.png'
+];
+
+yesButton.addEventListener('click', () => {
+    questionText.innerText = "Yay! 💖 I'm so happy! Happy Valentine's Day!";
+    yesButton.style.display = "none";
+    noButton.style.display = "none";
+    launchConfetti();
+});
+
+noButton.addEventListener('click', () => {
+    noCount++;
+    if(noCount <= questions.length){
+        questionText.innerText = questions[noCount - 1];
+        addSticker();
+    }
+    if(noCount === questions.length){
+        makeNoButtonRun();
+    }
+});
+
+function makeNoButtonRun() {
+    noButton.classList.add('moving');
+    document.addEventListener('mousemove', moveNoButton);
+}
+
+function moveNoButton(e){
+    const x = Math.random() * (window.innerWidth - noButton.offsetWidth);
+    const y = Math.random() * (window.innerHeight - noButton.offsetHeight);
+    noButton.style.left = x + 'px';
+    noButton.style.top = y + 'px';
+}
+
+// Add stickers randomly on the screen
+function addSticker(){
+    const stickerImg = document.createElement('img');
+    stickerImg.src = stickers[Math.floor(Math.random() * stickers.length)];
+    stickerImg.classList.add('sticker');
+    stickerImg.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+    stickerImg.style.top = Math.random() * (window.innerHeight - 50) + 'px';
+    document.body.appendChild(stickerImg);
+    setTimeout(() => stickerImg.remove(), 4000);
+}
+
+// Simple confetti effect
+function launchConfetti(){
+    const confettiCount = 150;
+    for(let i=0;i<confettiCount;i++){
+        const confetti = document.createElement('div');
+        confetti.style.position = 'absolute';
+        confetti.style.width = '10px';
+        confetti.style.height = '10px';
+        confetti.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 50%)`;
+        confetti.style.left = Math.random() * window.innerWidth + 'px';
+        confetti.style.top = '0px';
+        confetti.style.opacity = 0.7;
+        confetti.style.borderRadius = '50%';
+        confetti.style.pointerEvents = 'none';
+        document.body.appendChild(confetti);
+
+        const fallDuration = Math.random() * 3 + 2; // 2-5 seconds
+        confetti.animate([
+            { transform: `translateY(0px) rotate(0deg)` },
+            { transform: `translateY(${window.innerHeight}px) rotate(${Math.random()*360}deg)` }
+        ], {
+            duration: fallDuration * 1000,
+            iterations: 1,
+            easing: 'linear'
+        });
+
+        setTimeout(() => confetti.remove(), fallDuration * 1000);
+    }
+}
+</script>
+
+</body>
+</html>
